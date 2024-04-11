@@ -12,5 +12,5 @@ public interface AuthenticationService {
 
     JwtAuthenticationResponse signIn(SignInRequest signInRequest);
 
-    public JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
+    JwtAuthenticationResponse refreshToken(RefreshTokenRequest refreshTokenRequest);
 }

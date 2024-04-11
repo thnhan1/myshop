@@ -1,10 +1,12 @@
 package com.nhan.demosecurity.services.impl;
 
+import com.nhan.demosecurity.domain.Customer;
 import com.nhan.demosecurity.dto.JwtAuthenticationResponse;
 import com.nhan.demosecurity.dto.RefreshTokenRequest;
 import com.nhan.demosecurity.dto.SignUpRequest;
 import com.nhan.demosecurity.entities.Role;
 import com.nhan.demosecurity.entities.User;
+import com.nhan.demosecurity.repository.CustomerRepository;
 import com.nhan.demosecurity.repository.UserRepository;
 import com.nhan.demosecurity.services.AuthenticationService;
 import com.nhan.demosecurity.services.JWTService;
@@ -17,11 +19,11 @@ import org.springframework.stereotype.Service;
 import com.nhan.demosecurity.dto.SignInRequest;
 
 import java.util.HashMap;
-
 @Service
 @RequiredArgsConstructor
 public class AuthenticationServiceImpl implements AuthenticationService {
     private final UserRepository userRepository;
+    private final CustomerRepository customerRepository;
 
     private final PasswordEncoder passwordEncoder;
 
@@ -31,12 +33,23 @@ public class AuthenticationServiceImpl implements AuthenticationService {
     public User signUp(SignUpRequest signUpRequest) {
         User user = new User();
         user.setEmail(signUpRequest.getEmail());
-        user.setFirstname(signUpRequest.getFirstName());
-        user.setLastname(signUpRequest.getLastName());
+        user.setFirstName(signUpRequest.getFirstName());
+        user.setLastName(signUpRequest.getLastName());
         user.setRole(Role.USER);
         user.setPassword(passwordEncoder.encode(signUpRequest.getPassword()));
+        user.setPhoneNumber(signUpRequest.getPhoneNumber());
+        User savedUser = userRepository.save(user);
 
-       return userRepository.save(user);
+        // create new customer
+        Customer customer = new Customer();
+        customer.setFirstName(signUpRequest.getFirstName());
+        customer.setLastName(signUpRequest.getLastName());
+        customer.setEmail(signUpRequest.getEmail());
+
+        customer.setCustomerId(savedUser.getId());
+        customer.setPhoneNumber(signUpRequest.getPhoneNumber());
+        customerRepository.save(customer);
+       return savedUser;
     }
 
     public JwtAuthenticationResponse signIn(SignInRequest signInRequest) {

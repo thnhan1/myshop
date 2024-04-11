@@ -24,9 +24,10 @@ public class DemoSecurityApplication implements CommandLineRunner {
         if (adminAccount == null) {
             User admin = new User();
             admin.setEmail("admin@gmail.com");
-            admin.setFirstname("Tran");
-            admin.setLastname("Nhan");
+            admin.setFirstName("Tran");
+            admin.setLastName("Nhan");
             admin.setRole(Role.ADMIN);
+            admin.setPhoneNumber("0123456789");
             admin.setPassword(new BCryptPasswordEncoder().encode("admin"));
             userRepository.save(admin);
         }
